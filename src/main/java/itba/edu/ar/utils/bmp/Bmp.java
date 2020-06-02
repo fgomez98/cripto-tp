@@ -19,7 +19,7 @@ public class Bmp {
     /*
         Ayuda memoria:
         WORD => 2 bytes =(java)=> short
-        WORD => 4 bytes =(java)=> int
+        DWORD => 4 bytes =(java)=> int
      */
     /*
         Consideraciones:
