@@ -1,6 +1,7 @@
 package itba.edu.ar.utils.bmp;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class BitMapInfo {
     // Para mas info: https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapinfo
@@ -21,11 +22,12 @@ public class BitMapInfo {
         Creo que este bloque lo podemos no considerar
      */
 
-    private final RGBQuad bmiColors;
+    private final RGBQuad bmiColors = null;
 
     private BitMapInfo(ByteBuffer buf) {
         this.bmiHeader = BitMapInfoHeader.read(buf);
-        this.bmiColors = RGBQuad.read(buf);
+        /* opcional, no lo usamos para nuestro tipo de imagenes */
+//        this.bmiColors = RGBQuad.read(buf);
     }
 
     public static BitMapInfo read(ByteBuffer buf) {
@@ -34,9 +36,9 @@ public class BitMapInfo {
 
     public static BitMapInfo read(byte[] bytes) {
         if (bytes.length != SIZE) {
-            throw new IllegalArgumentException();
+            throw new InvalidBmpFile("The .bmp file contains an invalid BitMapInfoHeader");
         }
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        ByteBuffer buf = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN); // bmp usa little endian;
         return new BitMapInfo(buf);
     }
 

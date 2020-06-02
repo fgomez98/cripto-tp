@@ -1,6 +1,7 @@
 package itba.edu.ar.utils.bmp;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class BitMapInfoHeader {
     // Para mas info: https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)
@@ -12,10 +13,10 @@ public class BitMapInfoHeader {
     private final int biSize;
 
     /* The width of the bitmap, in pixels. */
-    private final long biWidth;
+    private final int biWidth;
 
     /* The height of the bitmap, in pixels. */
-    private final long biHeight;
+    private final int biHeight;
 
     /* The number of planes for the target device. This value must be set to 1. */
     private final short biPlanes;
@@ -34,10 +35,10 @@ public class BitMapInfoHeader {
         An application can use this value to select a bitmap from a resource group that best matches the
         characteristics of the current device.
     */
-    private final long biXPelsPerMeter;
+    private final int biXPelsPerMeter;
 
     /* The vertical resolution, in pixels-per-meter, of the target device for the bitmap. */
-    private final long biYPelsPerMeter;
+    private final int biYPelsPerMeter;
 
     /* The number of color indexes in the color table that are actually used by the bitmap. */
     private final int biClrUsed;
@@ -50,14 +51,14 @@ public class BitMapInfoHeader {
 
     private BitMapInfoHeader(ByteBuffer buf) {
         this.biSize = buf.getInt();
-        this.biWidth = buf.getLong();
-        this.biHeight = buf.getLong();
+        this.biWidth = buf.getInt();
+        this.biHeight = buf.getInt();
         this.biPlanes = buf.getShort();
         this.biBitCount = buf.getShort();
         this.biCompression = buf.getInt();
         this.biSizeImage = buf.getInt();
-        this.biXPelsPerMeter = buf.getLong();
-        this.biYPelsPerMeter = buf.getLong();
+        this.biXPelsPerMeter = buf.getInt();
+        this.biYPelsPerMeter = buf.getInt();
         this.biClrUsed = buf.getInt();
         this.biClrImportant = buf.getInt();
     }
@@ -68,22 +69,22 @@ public class BitMapInfoHeader {
 
     public static BitMapInfoHeader read(byte[] bytes) {
         if (bytes.length != SIZE) {
-            throw new IllegalArgumentException();
+            throw new InvalidBmpFile("The .bmp file contains an invalid BitMapInfoHeader");
         }
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        ByteBuffer buf = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN); // bmp usa little endian;
         return new BitMapInfoHeader(buf);
     }
 
     public static void write(BitMapInfoHeader header, ByteBuffer buf) {
         buf.putInt(header.biSize);
-        buf.putLong(header.biWidth);
-        buf.putLong(header.biHeight);
+        buf.putInt(header.biWidth);
+        buf.putInt(header.biHeight);
         buf.putShort(header.biPlanes);
         buf.putShort(header.biBitCount);
         buf.putInt(header.biCompression);
         buf.putInt(header.biSizeImage);
-        buf.putLong(header.biXPelsPerMeter);
-        buf.putLong(header.biYPelsPerMeter);
+        buf.putInt(header.biXPelsPerMeter);
+        buf.putInt(header.biYPelsPerMeter);
         buf.putInt(header.biClrUsed);
         buf.putInt(header.biClrImportant);
     }
@@ -92,11 +93,11 @@ public class BitMapInfoHeader {
         return biSize;
     }
 
-    public long getBiWidth() {
+    public int getBiWidth() {
         return biWidth;
     }
 
-    public long getBiHeight() {
+    public int getBiHeight() {
         return biHeight;
     }
 
@@ -116,11 +117,11 @@ public class BitMapInfoHeader {
         return biSizeImage;
     }
 
-    public long getBiXPelsPerMeter() {
+    public int getBiXPelsPerMeter() {
         return biXPelsPerMeter;
     }
 
-    public long getBiYPelsPerMeter() {
+    public int getBiYPelsPerMeter() {
         return biYPelsPerMeter;
     }
 

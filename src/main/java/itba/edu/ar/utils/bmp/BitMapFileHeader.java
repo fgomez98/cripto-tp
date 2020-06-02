@@ -1,6 +1,7 @@
 package itba.edu.ar.utils.bmp;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class BitMapFileHeader {
     // Para mas info: https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapfileheader
@@ -44,9 +45,9 @@ public class BitMapFileHeader {
 
     public static BitMapFileHeader read(byte[] bytes) {
         if (bytes.length != SIZE) {
-            throw new IllegalArgumentException();
+            throw new InvalidBmpFile("The .bmp file contains an invalid BitMapFileHeader");
         }
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        ByteBuffer buf = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN); // bmp usa little endian;
         return new BitMapFileHeader(buf);
     }
 
