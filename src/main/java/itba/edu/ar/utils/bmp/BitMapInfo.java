@@ -10,7 +10,7 @@ public class BitMapInfo {
     /* Para el tamaño de este bloque se esta tomnado al RGBQUAD no se lo considera */
     static final int SIZE = BitMapInfoHeader.SIZE;
 
-    BitMapInfoHeader bmiHeader;
+    private final BitMapInfoHeader bmiHeader;
 
     /*
         this block is mandatory when BitsPerPixel is less than or equal to 8, hence this block is semi-optional.
@@ -20,18 +20,37 @@ public class BitMapInfo {
 
         Creo que este bloque lo podemos no considerar
      */
-    RGBQuad bmiColors;
 
-    BitMapInfo(ByteBuffer buf) {
-        this.bmiHeader = new BitMapInfoHeader(buf);
-        this.bmiColors = new RGBQuad(buf);
+    private final RGBQuad bmiColors;
+
+    private BitMapInfo(ByteBuffer buf) {
+        this.bmiHeader = BitMapInfoHeader.read(buf);
+        this.bmiColors = RGBQuad.read(buf);
     }
 
-    BitMapInfo(byte[] bytes) {
+    public static BitMapInfo read(ByteBuffer buf) {
+        return new BitMapInfo(buf);
+    }
+
+    public static BitMapInfo read(byte[] bytes) {
         if (bytes.length != SIZE) {
             throw new IllegalArgumentException();
         }
-        this.bmiHeader = new BitMapInfoHeader(bytes);
-        this.bmiColors = new RGBQuad(bytes);
+        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        return new BitMapInfo(buf);
+    }
+
+    public static void write(BitMapInfo header, ByteBuffer buf) {
+        BitMapInfoHeader.write(header.bmiHeader, buf);
+        /* opcional, no lo usamos para nuestro tipo de imagenes */
+        // RGBQuad.write(header.bmiColors, buf);
+    }
+
+    public BitMapInfoHeader getBmiHeader() {
+        return bmiHeader;
+    }
+
+    public RGBQuad getBmiColors() {
+        return bmiColors;
     }
 }

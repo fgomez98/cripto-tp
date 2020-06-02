@@ -8,29 +8,29 @@ public class BitMapFileHeader {
     static final int SIZE = 14;
 
     /*WORD, The file type; must be BM.*/
-    short bfType;
+    private final short bfType;
 
     /*DWORD, The size, in bytes, of the bitmap file.*/
-    int bfSize;
+    private final int bfSize;
 
     /*WORD, Reserved; must be zero.*/
-    short bfReserved1;
+    private final short bfReserved1;
 
     /*WORD, Reserved; must be zero.*/
-    short bfReserved2;
+    private final short bfReserved2;
 
     /*DWORD, The offset, in bytes, from the beginning of the BITMAPFILEHEADER structure to the bitmap bits.*/
-    int bfOffBits;
+    private final int bfOffBits;
 
-        /*
-            A BITMAPINFO or BITMAPCOREINFO structure immediately follows the BITMAPFILEHEADER structure in the DIB file.
+    /*
+        A BITMAPINFO or BITMAPCOREINFO structure immediately follows the BITMAPFILEHEADER structure in the DIB file.
+    */
+
+    private BitMapFileHeader(ByteBuffer buf) {
+         /*
+            Los archivos que les entregaremos tendrán el tamaño guardado en forma Big Endian.
+            The initial order of a byte buffer is always BIG_ENDIAN
         */
-
-    private void read(ByteBuffer buf) {
-            /*
-                Los archivos que les entregaremos tendrán el tamaño guardado en forma Big Endian.
-                The initial order of a byte buffer is always BIG_ENDIAN
-             */
         this.bfType = buf.getShort();
         this.bfSize = buf.getInt();
         this.bfReserved1 = buf.getShort();
@@ -38,15 +38,43 @@ public class BitMapFileHeader {
         this.bfOffBits = buf.getInt();
     }
 
-    BitMapFileHeader(ByteBuffer buf) {
-        read(buf);
+    public static BitMapFileHeader read(ByteBuffer buf) {
+        return new BitMapFileHeader(buf);
     }
 
-    BitMapFileHeader(byte[] bytes) {
+    public static BitMapFileHeader read(byte[] bytes) {
         if (bytes.length != SIZE) {
             throw new IllegalArgumentException();
         }
         ByteBuffer buf = ByteBuffer.wrap(bytes);
-        read(buf);
+        return new BitMapFileHeader(buf);
+    }
+
+    public static void write(BitMapFileHeader header, ByteBuffer buf) {
+        buf.putShort(header.bfType);
+        buf.putInt(header.bfSize);
+        buf.putShort(header.bfReserved1);
+        buf.putShort(header.bfReserved2);
+        buf.putInt(header.bfOffBits);
+    }
+
+    public short getBfType() {
+        return bfType;
+    }
+
+    public int getBfSize() {
+        return bfSize;
+    }
+
+    public short getBfReserved1() {
+        return bfReserved1;
+    }
+
+    public short getBfReserved2() {
+        return bfReserved2;
+    }
+
+    public int getBfOffBits() {
+        return bfOffBits;
     }
 }
