@@ -31,3 +31,5 @@ config.properties
 .DS_Store
 .AppleDouble
 .LSOverride
+
+src/main/resources/outBMP.bmp
