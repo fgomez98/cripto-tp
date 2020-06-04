@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Bmp {
     /*
@@ -42,13 +43,28 @@ public class Bmp {
         this.fileHeader = BitMapFileHeader.read(buf);
         this.infoHeader = BitMapInfo.read(buf);
 
-        if (infoHeader.getBmiHeader().getBiCompression() != 0) {
-            throw new InvalidBmpFile("The .bmp file should  not be compressed");
+        if (fileHeader.getBfType() != 19778) {
+            throw new InvalidBmpFile("The file type must be BM");
         }
-
+        if (fileHeader.getBfSize() != bytes.length) {
+            throw new InvalidBmpFile("The size, in bytes, of the .bmp file does not match the size specified in fileHeader");
+        }
+        if (infoHeader.getBmiHeader().getBiBitCount() != 24) {
+            throw new InvalidBmpFile("The .bmp file must match 24 bits-per-pixel.");
+        }
+        if (infoHeader.getBmiHeader().getBiCompression() != 0) {
+            throw new InvalidBmpFile("The .bmp file should not be compressed");
+        }
+        // chequeos de que el tamaño de la imagen corresponda con lo especificado en el header
         int pixelDataSize = bytes.length - BitMapFileHeader.SIZE - BitMapInfoHeader.SIZE;
         this.pixelData = new byte[pixelDataSize];
         buf.get(this.pixelData);
+    }
+
+    private Bmp(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] pixelData) {
+        this.fileHeader = fileHeader;
+        this.infoHeader = infoHeader;
+        this.pixelData = pixelData;
     }
 
     public static Bmp read(File file) throws IOException {
@@ -91,6 +107,19 @@ public class Bmp {
         write(bmp, new File(pathToFile));
     }
 
+    public static void write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, File file) throws IOException {
+        Bmp bmp = new Bmp(fileHeader, infoHeader, image);
+        write(bmp, file);
+    }
+
+    public static void write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, String pathToFile) throws IOException {
+        write(fileHeader, infoHeader, image, new File(pathToFile));
+    }
+
+    public static void write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, Path path) throws IOException {
+        write(fileHeader, infoHeader, image, path.toFile());
+    }
+
     public BitMapFileHeader getFileHeader() {
         return fileHeader;
     }
@@ -100,7 +129,7 @@ public class Bmp {
     }
 
     public byte[] getPixelData() {
-        return pixelData;
+        return Arrays.copyOf(pixelData, pixelData.length);
     }
 
     /*
@@ -109,7 +138,7 @@ public class Bmp {
      */
 
     public static void main(String[] args) throws IOException {
-        String pathToFile = "src/main/resources/myBMP.bmp";
+        String pathToFile = "src/main/resources/lima.bmp";
         Bmp bmp = Bmp.read(pathToFile);
         Bmp.write(bmp, "src/main/resources/outBMP.bmp");
     }
