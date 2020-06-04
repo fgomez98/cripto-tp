@@ -107,17 +107,18 @@ public class Bmp {
         write(bmp, new File(pathToFile));
     }
 
-    public static void write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, File file) throws IOException {
+    public static Bmp write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, File file) throws IOException {
         Bmp bmp = new Bmp(fileHeader, infoHeader, image);
         write(bmp, file);
+        return bmp;
     }
 
-    public static void write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, String pathToFile) throws IOException {
-        write(fileHeader, infoHeader, image, new File(pathToFile));
+    public static Bmp write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, String pathToFile) throws IOException {
+        return write(fileHeader, infoHeader, image, new File(pathToFile));
     }
 
-    public static void write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, Path path) throws IOException {
-        write(fileHeader, infoHeader, image, path.toFile());
+    public static Bmp write(BitMapFileHeader fileHeader, BitMapInfo infoHeader, byte[] image, Path path) throws IOException {
+        return write(fileHeader, infoHeader, image, path.toFile());
     }
 
     public BitMapFileHeader getFileHeader() {
