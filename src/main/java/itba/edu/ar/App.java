@@ -1,14 +1,15 @@
 package itba.edu.ar;
 
 
-import itba.edu.ar.api.Algorithm;
-import itba.edu.ar.api.Encription;
-import itba.edu.ar.api.Mode;
+import itba.edu.ar.api.SteganographyAlgorithm;
+import itba.edu.ar.utils.criptography.EncriptionAlgorithm;
+import itba.edu.ar.utils.criptography.EncriptionMode;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class App {
@@ -20,13 +21,13 @@ public class App {
     private Boolean extract;
 
     @Option(name = "-steg", usage = "Algoritmo de esteganografiado: LSB de 1bit, LSB de 4 bits, LSB Improved", required = true)
-    private Algorithm stegobmpAlgorithm;
+    private SteganographyAlgorithm stegoAlgorithm;
 
     @Option(name = "-a", usage = "Algoritmo de encripción")
-    private Encription encription = Encription.AES128;
+    private EncriptionAlgorithm encriptionAlgorithm = EncriptionAlgorithm.AES128;
 
     @Option(name = "-m", usage = "Modo de encripción")
-    private Mode mode = Mode.CBC;
+    private EncriptionMode encriptionMode = EncriptionMode.CBC;
 
     @Option(name = "-in", usage = "Archivo que se va a ocultar", depends = {"-embed"}, handler = StringArrayOptionHandler.class)
     private String[] inFilename = {}; // Se settea como un empty array por que el handler StringArrayOptionHandler.class no considera valores default null
@@ -51,16 +52,16 @@ public class App {
         return Optional.ofNullable(extract);
     }
 
-    public Optional<Algorithm> getStegobmpAlgorithm() {
-        return Optional.ofNullable(stegobmpAlgorithm);
+    public Optional<SteganographyAlgorithm> getStegoAlgorithm() {
+        return Optional.ofNullable(stegoAlgorithm);
     }
 
-    public Optional<Encription> getEncription() {
-        return Optional.ofNullable(encription);
+    public Optional<EncriptionAlgorithm> getEncriptionAlgorithm() {
+        return Optional.ofNullable(encriptionAlgorithm);
     }
 
-    public Optional<Mode> getMode() {
-        return Optional.ofNullable(mode);
+    public Optional<EncriptionMode> getEncriptionMode() {
+        return Optional.ofNullable(encriptionMode);
     }
 
     public Optional<String> getEncriptionPassword() {
@@ -89,6 +90,7 @@ public class App {
         return value.isEmpty() ? Optional.empty() : Optional.of(value);
     }
 
+    @SuppressWarnings("deprecation")
     public static void main(String[] args) {
         App app = new App();
 
@@ -110,5 +112,20 @@ public class App {
             parser.printUsage(System.err);
             System.exit(1);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "App{" + "\n" +
+                "embed=" + embed + "\n" +
+                ", extract=" + extract + "\n" +
+                ", stegobmpAlgorithm=" + stegoAlgorithm + "\n" +
+                ", encription=" + encriptionAlgorithm + "\n" +
+                ", mode=" + encriptionMode + "\n" +
+                ", inFilename=" + Arrays.toString(inFilename) + "\n" +
+                ", holderFilename=" + Arrays.toString(holderFilename) + "\n" +
+                ", outFilename=" + Arrays.toString(outFilename) + "\n" +
+                ", encriptionPassword=" + Arrays.toString(encriptionPassword) + "\n" +
+                '}';
     }
 }

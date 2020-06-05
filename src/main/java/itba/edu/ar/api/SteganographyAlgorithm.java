@@ -1,5 +1,5 @@
 package itba.edu.ar.api;
 
-public enum Algorithm {
+public enum SteganographyAlgorithm {
     LSB1, LSB4, LSBI
 }
