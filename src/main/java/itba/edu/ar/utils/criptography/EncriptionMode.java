@@ -6,8 +6,6 @@ public enum EncriptionMode {
 
     ECB("ECB", EncriptionPadding.PKCS5),
 
-    // todo: los modos de aca para abajo requieren de un iv asi que van a fallar todos en el test
-
     CFB("CFB8", EncriptionPadding.NO),
     OFB("OFB", EncriptionPadding.NO),
     CBC("CBC", EncriptionPadding.PKCS5);

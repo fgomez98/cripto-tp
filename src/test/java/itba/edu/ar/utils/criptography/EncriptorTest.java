@@ -31,9 +31,10 @@ public class EncriptorTest {
             for (Encriptor enc : encriptors) {
                 System.out.println("Usando: " + enc.getTransformation());
                 byte[] cipherText = enc.simetricEncript(message, password);
-                System.out.println("El cifrado es:" + hexStringFromBytes(cipherText));
+                System.out.println("El mensaje es: " + hexStringFromBytes(message));
+                System.out.println("El cifrado es: " + hexStringFromBytes(cipherText));
                 byte[] desCipherText = enc.simetricDecript(cipherText, password);
-                System.out.println("El descifrado es:" + new String(desCipherText, StandardCharsets.UTF_8));
+                System.out.println("El descifrado es: " + new String(desCipherText, StandardCharsets.UTF_8) + "\n");
                 Assert.assertArrayEquals(message, desCipherText);
             }
         } catch (Exception e) {
