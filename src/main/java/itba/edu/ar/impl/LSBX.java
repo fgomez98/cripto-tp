@@ -17,7 +17,7 @@ public class LSBX implements LSB {
 
     @Override
     public byte[] encrypt(byte[] message, byte[] bmp) {
-        if(!canEncript(message, bmp)) {
+        if(!canEncrypt(message, bmp)) {
             System.out.println("BMP file is too small for the message");
             return null;
         }
@@ -77,7 +77,7 @@ public class LSBX implements LSB {
             arr[pos] &= 255 - (1 << shifting);
     }
 
-    private boolean canEncript(byte[] message, byte[] bmp) {
+    private boolean canEncrypt(byte[] message, byte[] bmp) {
         int bitsToWrite = message.length * 8;
         return bmp.length * shiftingSize >= bitsToWrite;
     }
