@@ -33,3 +33,5 @@ config.properties
 .LSOverride
 
 src/main/resources/outBMP.bmp
+src/main/resources/hidden-message.bmp
+src/main/resources/hidden-message.txt

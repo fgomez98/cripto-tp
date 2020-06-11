@@ -28,7 +28,7 @@ public class Steganographer {
     public void embed(String inFilename, String holderFilename, String outFilename) throws Exception {
         Bmp holderBmp = Bmp.read(holderFilename);
 
-        byte[] extensionBytes = getExtension(inFilename).getBytes();
+        byte[] extensionBytes = toNullTerminatedBytes(getExtension(inFilename));
         byte[] fileBytes = Files.readAllBytes(Paths.get(inFilename));
         byte[] fileSizeBytes = toBigEndianBytes(fileBytes.length);
 
@@ -60,6 +60,11 @@ public class Steganographer {
         }
 
         // LSB
+
+        if (holderBmp.getInfoHeader().getBmiHeader().getBiSizeImage() < messageLenght) {
+            throw new IllegalArgumentException("Holder .bmp file is to small to hide given message");
+        }
+
         byte[] outBmpPixelData = lsb.encrypt(message, holderBmp.getPixelData());
 
         // guardamos
@@ -71,24 +76,29 @@ public class Steganographer {
     */
     public void extract(String holderFilename, String outFilename) throws Exception {
         Bmp holderBmp = Bmp.read(holderFilename);
+
+        // LSB
+
         byte[] message = lsb.decrypt(holderBmp.getPixelData());
 
         if (cipher != null) {
             // Tamaño cifrado || encripcion(tamaño real || datos archivo || extensión)
             byte[] encriptedMessageSizeBytes = Arrays.copyOf(message, 4);
-            int encriptedMessageSize = asBigEndianBytes(encriptedMessageSizeBytes);
-            byte[] encriptedMessageBytes = Arrays.copyOfRange(message, 4, encriptedMessageSize);
+            int encriptedMessageSize = fromBigEndianBytes(encriptedMessageSizeBytes);
+            byte[] encriptedMessageBytes = Arrays.copyOfRange(message, 4, encriptedMessageSize + 4);
 
             message = cipher.simetricDecript(encriptedMessageBytes, encriptionPassword);
         }
 
         // tamaño real || datos archivo || extensión
         byte[] fileSizeBytes = Arrays.copyOf(message, 4);
-        int fileSize = asBigEndianBytes(fileSizeBytes);
-        byte[] fileBytes = Arrays.copyOfRange(message, 4, fileSize);
+        int fileSize = fromBigEndianBytes(fileSizeBytes);
+        byte[] fileBytes = Arrays.copyOfRange(message, 4, fileSize + 4);
         byte[] extensionBytes = Arrays.copyOfRange(message, 4 + fileSize, message.length);
 
-        String extension = new String(extensionBytes, StandardCharsets.UTF_8); // + "\0" de ser necesario
+        String extension = fromNullTerminatedBytes(extensionBytes);
+
+        // guardamos
 
         File outFile = new File(outFilename + extension);
         OutputStream os = new FileOutputStream(outFile);
@@ -100,15 +110,31 @@ public class Steganographer {
         return filename.contains(".") ? filename.substring(filename.lastIndexOf(".")) : "";
     }
 
+    private byte[] toNullTerminatedBytes(String str) {
+        byte[] stringBytes = str.getBytes(StandardCharsets.ISO_8859_1);
+        byte[] nullTerminatedBytes = new byte[stringBytes.length + 1];
+        System.arraycopy(stringBytes, 0, nullTerminatedBytes, 0, stringBytes.length);
+        return nullTerminatedBytes;
+    }
+
+    private String fromNullTerminatedBytes(byte[] nullTerminatedBytes) {
+        int i = 0;
+        while (i < nullTerminatedBytes.length && nullTerminatedBytes[i] != '\0') {
+            i++;
+        }
+        return new String(nullTerminatedBytes, 0, i, StandardCharsets.UTF_8);
+    }
+
     private byte[] toBigEndianBytes(int aInt) {
         ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
         b.putInt(aInt);
         return b.array();
     }
 
-    private int asBigEndianBytes(byte[] aInt) {
+    private int fromBigEndianBytes(byte[] aInt) {
         ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
         b.put(aInt);
+        b.flip();
         return b.getInt();
     }
 

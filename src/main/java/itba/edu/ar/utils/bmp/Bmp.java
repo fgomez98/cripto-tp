@@ -49,6 +49,9 @@ public class Bmp {
         if (fileHeader.getBfSize() != bytes.length) {
             throw new InvalidBmpFile("The size, in bytes, of the .bmp file does not match the size specified in fileHeader");
         }
+        if (fileHeader.getBfSize() - fileHeader.getBfOffBits() != infoHeader.getBmiHeader().getBiSizeImage()) {
+            throw new InvalidBmpFile("The header offset specified in fileHeader of the .bmp file is invalid");
+        }
         if (infoHeader.getBmiHeader().getBiBitCount() != 24) {
             throw new InvalidBmpFile("The .bmp file must match 24 bits-per-pixel.");
         }

@@ -1,0 +1,3 @@
+How you doin' ;)
+-embed -in "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/message.txt" -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/lado.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message.bmp" -steg MIRROR -pass "titihenry"
+-extract -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message" -steg MIRROR -pass "titihenry"
