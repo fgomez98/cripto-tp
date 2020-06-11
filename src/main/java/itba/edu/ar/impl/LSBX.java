@@ -6,6 +6,7 @@ import java.util.BitSet;
 
 public class LSBX implements LSB {
 
+    // Cantidad de bits que se usan en cada byte para guardar el mensaje
     private int shiftingSize;
 
     public LSBX(int shiftingSize) {
