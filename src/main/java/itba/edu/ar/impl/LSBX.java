@@ -10,8 +10,10 @@ public class LSBX implements LSB {
     private int shiftingSize;
 
     public LSBX(int shiftingSize) {
-        if(shiftingSize < 1)
+        if(shiftingSize < 1 || shiftingSize > 8) {
             shiftingSize = 1;
+            System.out.println("Invalid shifting, must be between 1 and 8. Using 1 insted.");
+        }
         this.shiftingSize = shiftingSize;
     }
 
