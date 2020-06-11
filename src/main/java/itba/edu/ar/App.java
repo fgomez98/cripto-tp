@@ -1,9 +1,9 @@
 package itba.edu.ar;
 
-
 import itba.edu.ar.api.SteganographyAlgorithm;
 import itba.edu.ar.utils.criptography.EncriptionAlgorithm;
 import itba.edu.ar.utils.criptography.EncriptionMode;
+import itba.edu.ar.utils.criptography.Encriptor;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -112,6 +112,30 @@ public class App {
             parser.printUsage(System.err);
             System.exit(1);
         }
+
+        Steganographer.SteganographerBuilder stegoBuilder = new Steganographer.SteganographerBuilder()
+                .withLsb(app.getStegoAlgorithm().get().getEncryptor());
+
+        if (app.getEncriptionPassword().isPresent()) {
+            stegoBuilder.withCipher(Encriptor.from(app.getEncriptionAlgorithm().get(), app.getEncriptionMode().get()), app.getEncriptionPassword().get());
+        }
+
+        Steganographer stego = stegoBuilder.build();
+
+        try {
+            if (app.getEmbed().isPresent()) {
+                if (app.getEmbed().get()) {
+                    stego.embed(app.getInFilename().get(), app.getHolderFilename().get(), app.getOutFilename().get());
+                }
+            } else if (app.getExtract().isPresent()) {
+                if (app.getExtract().get()) {
+                    stego.extract(app.getHolderFilename().get(), app.getOutFilename().get());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
