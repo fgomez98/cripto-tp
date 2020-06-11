@@ -4,6 +4,6 @@ public interface LSB {
 
     byte[] encrypt(byte[] message, byte[] bmp);
 
-    byte[] decrypt(byte[] message);
+    byte[] decrypt(byte[] bmp);
 
 }
