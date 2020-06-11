@@ -4,11 +4,15 @@ import itba.edu.ar.api.LSB;
 import itba.edu.ar.utils.bmp.Bmp;
 import itba.edu.ar.utils.criptography.Encriptor;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Steganographer {
 
@@ -26,20 +30,33 @@ public class Steganographer {
 
         byte[] extensionBytes = getExtension(inFilename).getBytes();
         byte[] fileBytes = Files.readAllBytes(Paths.get(inFilename));
-        ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
-        b.putInt(fileBytes.length);
-        byte[] fileSizeBytes = b.array();
+        byte[] fileSizeBytes = toBigEndianBytes(fileBytes.length);
 
         // 4 (del tamaño) + longitud archivo + e(extensión)
-        int messageLenght = 4 + fileBytes.length + extensionBytes.length;
+        // tamaño real || datos archivo || extensión
+
+        // array initialization
+        int messageLenght = fileSizeBytes.length + fileBytes.length + extensionBytes.length;
         byte[] message = new byte[messageLenght];
 
-        System.arraycopy(fileSizeBytes, 0, message, 0, 4);
-        System.arraycopy(fileBytes, 0, message, 4, fileBytes.length);
-        System.arraycopy(extensionBytes, 0, message, fileBytes.length + 4, extensionBytes.length);
+        // array concatenation
+        System.arraycopy(fileSizeBytes, 0, message, 0, fileSizeBytes.length);
+        System.arraycopy(fileBytes, 0, message, fileSizeBytes.length, fileBytes.length);
+        System.arraycopy(extensionBytes, 0, message, fileSizeBytes.length + fileBytes.length, extensionBytes.length);
 
         if (cipher != null) {
-            message = cipher.simetricEncript(message, encriptionPassword);
+            byte[] encriptedMessageBytes = cipher.simetricEncript(message, encriptionPassword);
+            byte[] encriptedMessageSizeBytes = toBigEndianBytes(encriptedMessageBytes.length);
+
+            // Tamaño cifrado || encripcion(tamaño real || datos archivo || extensión)
+
+            // array initialization
+            messageLenght = encriptedMessageSizeBytes.length + encriptedMessageBytes.length;
+            message = new byte[messageLenght];
+
+            // array concatenation
+            System.arraycopy(encriptedMessageSizeBytes, 0, message, 0, encriptedMessageSizeBytes.length);
+            System.arraycopy(encriptedMessageBytes, 0, message, encriptedMessageSizeBytes.length, encriptedMessageBytes.length);
         }
 
         // LSB
@@ -49,14 +66,50 @@ public class Steganographer {
         Bmp.write(holderBmp.getFileHeader(), holderBmp.getInfoHeader(), outBmpPixelData, outFilename);
     }
 
-    public void extract(String holderFilename, String outFilename) throws IOException {
+    /*
+        holder archivo .bmp con mensaje oculto, outFilename path a donde guardar el mensaje oculto
+    */
+    public void extract(String holderFilename, String outFilename) throws Exception {
         Bmp holderBmp = Bmp.read(holderFilename);
-        lsb.decrypt(holderBmp.getPixelData());
+        byte[] message = lsb.decrypt(holderBmp.getPixelData());
 
+        if (cipher != null) {
+            // Tamaño cifrado || encripcion(tamaño real || datos archivo || extensión)
+            byte[] encriptedMessageSizeBytes = Arrays.copyOf(message, 4);
+            int encriptedMessageSize = asBigEndianBytes(encriptedMessageSizeBytes);
+            byte[] encriptedMessageBytes = Arrays.copyOfRange(message, 4, encriptedMessageSize);
+
+            message = cipher.simetricDecript(encriptedMessageBytes, encriptionPassword);
+        }
+
+        // tamaño real || datos archivo || extensión
+        byte[] fileSizeBytes = Arrays.copyOf(message, 4);
+        int fileSize = asBigEndianBytes(fileSizeBytes);
+        byte[] fileBytes = Arrays.copyOfRange(message, 4, fileSize);
+        byte[] extensionBytes = Arrays.copyOfRange(message, 4 + fileSize, message.length);
+
+        String extension = new String(extensionBytes, StandardCharsets.UTF_8); // + "\0" de ser necesario
+
+        File outFile = new File(outFilename + extension);
+        OutputStream os = new FileOutputStream(outFile);
+        os.write(fileBytes);
+        os.close();
     }
 
     private String getExtension(String filename) {
         return filename.contains(".") ? filename.substring(filename.lastIndexOf(".")) : "";
+    }
+
+    private byte[] toBigEndianBytes(int aInt) {
+        ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
+        b.putInt(aInt);
+        return b.array();
+    }
+
+    private int asBigEndianBytes(byte[] aInt) {
+        ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
+        b.put(aInt);
+        return b.getInt();
     }
 
     public static final class SteganographerBuilder {

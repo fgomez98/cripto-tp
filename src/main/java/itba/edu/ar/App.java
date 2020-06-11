@@ -123,19 +123,14 @@ public class App {
         Steganographer stego = stegoBuilder.build();
 
         try {
-            if (app.getEmbed().isPresent()) {
-                if (app.getEmbed().get()) {
-                    stego.embed(app.getInFilename().get(), app.getHolderFilename().get(), app.getOutFilename().get());
-                }
-            } else if (app.getExtract().isPresent()) {
-                if (app.getExtract().get()) {
-                    stego.extract(app.getHolderFilename().get(), app.getOutFilename().get());
-                }
+            if (app.getEmbed().orElse(false)) {
+                stego.embed(app.getInFilename().get(), app.getHolderFilename().get(), app.getOutFilename().get());
+            } else if (app.getExtract().orElse(false)) {
+                stego.extract(app.getHolderFilename().get(), app.getOutFilename().get());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
