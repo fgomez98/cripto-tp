@@ -122,7 +122,7 @@ public class Steganographer {
         while (i < nullTerminatedBytes.length && nullTerminatedBytes[i] != '\0') {
             i++;
         }
-        return new String(nullTerminatedBytes, 0, i, StandardCharsets.UTF_8);
+        return new String(nullTerminatedBytes, 0, i, StandardCharsets.ISO_8859_1);
     }
 
     private byte[] toBigEndianBytes(int aInt) {
@@ -134,7 +134,7 @@ public class Steganographer {
     private int fromBigEndianBytes(byte[] aInt) {
         ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
         b.put(aInt);
-        b.flip();
+        b.rewind();
         return b.getInt();
     }
 
