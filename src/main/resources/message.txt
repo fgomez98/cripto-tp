@@ -1,3 +1,4 @@
 How you doin' ;)
--embed -in "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/message.txt" -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/lado.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message.bmp" -steg MIRROR -pass "titihenry"
--extract -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message" -steg MIRROR -pass "titihenry"
+-embed -in "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/message.txt" -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/lado.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message.bmp" -steg LSB1
+-extract -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/silence.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message" -steg LSB1
+-extract -p "/Users/fermingomez/Desktop/archivos/ladoLSB4.bmp" -out "/Users/fermingomez/Desktop/archivos/hidden-message" -steg LSB4
