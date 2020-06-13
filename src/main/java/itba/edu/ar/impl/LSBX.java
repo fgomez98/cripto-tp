@@ -2,7 +2,6 @@ package itba.edu.ar.impl;
 
 import itba.edu.ar.api.LSB;
 
-import java.util.BitSet;
 
 public class LSBX implements LSB {
 
@@ -24,18 +23,14 @@ public class LSBX implements LSB {
             return null;
         }
 
-        int shiftingValue = shiftingSize - 1;
         int bmpIndex = 0;
         byte[] editedBmp = bmp.clone();
-        for (int messageIndex = 0; messageIndex < message.length * 8; messageIndex++) {
-            if (shiftingValue < 0) {
-                shiftingValue = this.shiftingSize - 1;
-                bmpIndex++;
+        for (int messageIndex = 0; messageIndex < message.length * 8; bmpIndex++) {
+            for (int i = shiftingSize - 1; i >= 0; i--) {
+                int bitValue = getBitValueFromArray(message, messageIndex);
+                setBitValue(editedBmp, bmpIndex, i, bitValue);
+                messageIndex++;
             }
-
-            int bitValue = getBitValueFromArray(message, messageIndex);
-            setBitValue(editedBmp, bmpIndex, shiftingValue, bitValue);
-            shiftingValue--;
         }
         return editedBmp;
     }
@@ -46,13 +41,13 @@ public class LSBX implements LSB {
             return null;
 
         int messageLength = (bmp.length * shiftingSize) / 8;
-        if(messageLength < 1)
+        if (messageLength < 1)
             messageLength = 1;
         byte[] message = new byte[messageLength];
         int messageIndex = 0;
         for (int bmpIndex = 0; bmpIndex < bmp.length; bmpIndex++) {
             for (int i = shiftingSize - 1; i >= 0; i--) {
-                if(getBitValue(bmp[bmpIndex], i) > 0) {
+                if (getBitValue(bmp[bmpIndex], i) > 0) {
                     turnBitOn(message, messageIndex);
                 }
                 messageIndex++;
@@ -67,7 +62,7 @@ public class LSBX implements LSB {
 
     private int getBitValueFromArray(byte[] arr, int bit) {
         int index = bit / 8;
-        int bitPosition = (bit % 8);
+        int bitPosition = 7 - (bit % 8);
 
         return getBitValue(arr[index], bitPosition);
     }
@@ -81,9 +76,9 @@ public class LSBX implements LSB {
 
     private void setBitValue(byte[] arr, int pos, int shifting, int value) {
         if (value == 1)
-            arr[pos] |= 1 >> shifting;
+            arr[pos] |= 1 << shifting;
         else
-            arr[pos] &= 255 - (1 >> shifting);
+            arr[pos] &= (255 - (1 << shifting));
     }
 
     private boolean canEncrypt(byte[] message, byte[] bmp) {
