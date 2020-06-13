@@ -100,7 +100,6 @@ public class Steganographer {
 
         // guardamos
 
-        System.out.println(new String(message, StandardCharsets.ISO_8859_1));
         File outFile = new File(outFilename + extension);
         OutputStream os = new FileOutputStream(outFile);
         os.write(fileBytes);
