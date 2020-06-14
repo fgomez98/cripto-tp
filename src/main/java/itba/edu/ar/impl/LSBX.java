@@ -2,9 +2,13 @@ package itba.edu.ar.impl;
 
 import itba.edu.ar.api.LSB;
 
+import java.nio.ByteBuffer;
+
 
 public class LSBX implements LSB {
 
+    // Cantidad de bits reservados al tamaño
+    private static final int SIZE_LENGTH = 32;
     // Cantidad de bits que se usan en cada byte para guardar el mensaje
     private int shiftingSize;
 
@@ -40,20 +44,38 @@ public class LSBX implements LSB {
         if (bmp == null)
             return null;
 
-        int messageLength = (bmp.length * shiftingSize) / 8;
-        if (messageLength < 1)
-            messageLength = 1;
-        byte[] message = new byte[messageLength];
-        int messageIndex = 0;
-        for (int bmpIndex = 0; bmpIndex < bmp.length; bmpIndex++) {
-            for (int i = shiftingSize - 1; i >= 0; i--) {
-                if (getBitValue(bmp[bmpIndex], i) > 0) {
-                    turnBitOn(message, messageIndex);
-                }
-                messageIndex++;
-            }
+        int messageLength = getMessageLength(bmp);
+
+        return decrypt(bmp, messageLength * 8 / shiftingSize, SIZE_LENGTH / shiftingSize);
+    }
+
+    // Size en bytes
+    private byte[] decrypt(byte[] toDecrypt, int size, int startByte) {
+        byte[] reader = new byte[size];
+        int readerIndex = 0;
+        for (int decryptIndex = startByte; decryptIndex < size; decryptIndex++) {
+            readerIndex = setValuesToMessage(readerIndex, toDecrypt[decryptIndex], reader);
         }
-        return message;
+        return reader;
+    }
+
+    private byte[] decrypt(byte[] toDecrypt, int size) {
+        return decrypt(toDecrypt,size,0);
+    }
+
+    private int getMessageLength(byte[] toDecypt) {
+        byte[] size = decrypt(toDecypt, SIZE_LENGTH / shiftingSize);
+        return ByteBuffer.wrap(size).getInt();
+    }
+
+    private int setValuesToMessage(int messageIndex, byte toDecrypt, byte[] message) {
+        for (int i = shiftingSize - 1; i >= 0; i--) {
+            if (getBitValue(toDecrypt, i) > 0) {
+                turnBitOn(message, messageIndex);
+            }
+            messageIndex++;
+        }
+        return messageIndex;
     }
 
     private int getBitValue(byte b, int position) {
