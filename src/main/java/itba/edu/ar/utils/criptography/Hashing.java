@@ -19,7 +19,6 @@ public class Hashing {
 
     private static byte[] hash(byte[] bytes, String method) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(method);
-        md.update(bytes);
         return md.digest(bytes);
     }
 

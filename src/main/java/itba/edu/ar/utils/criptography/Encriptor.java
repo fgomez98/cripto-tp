@@ -116,7 +116,7 @@ public class Encriptor {
         byte[] iv = new byte[ivSize];
         int ivIndex = 0;
         while (true) {
-            for (int i = 0; i < iterations; i++) {
+            for (int i = 1; i < iterations; i++) {
                 mdBuff = Hashing.sha256(mdBuff);
             }
             int mdBuffIndex = 0;
