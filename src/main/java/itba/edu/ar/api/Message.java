@@ -40,7 +40,7 @@ public class Message {
         private byte[] fileBytes;
         private byte[] fileExtension;
 
-        private MessageBuilder() {
+        public MessageBuilder() {
         }
 
         public static MessageBuilder aMessage() {

@@ -38,7 +38,7 @@ public class CipherMessage {
         private byte[] cipherSize; // en big-endian
         private byte[] cipherBytes; // bytes
 
-        private CipherMessageBuilder() {
+        public CipherMessageBuilder() {
         }
 
         public static CipherMessageBuilder aCipherMessage() {
