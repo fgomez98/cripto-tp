@@ -9,6 +9,18 @@ public class CipherMessage {
     private byte[] cipherSize; // en big-endian
     private byte[] cipherBytes; // bytes
 
+    public byte[] getCipherSizeBytes() {
+        return cipherSize;
+    }
+
+    public byte[] getCipherBytes() {
+        return cipherBytes;
+    }
+
+    public int getCipherSize() {
+        return MessageUtils.fromBigEndianBytes(cipherSize);
+    }
+
     public byte[] toByteArray() {
         int messageLenght = cipherSize.length + cipherBytes.length;
         byte[] message = new byte[messageLenght];

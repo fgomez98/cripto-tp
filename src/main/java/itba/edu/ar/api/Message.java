@@ -26,6 +26,17 @@ public class Message {
         return fileBytes;
     }
 
+    public byte[] getFileSizeBytes() {
+        return fileSize;
+    }
+
+    /*
+        Null-terminated array
+     */
+    public byte[] getFileExtensionBytes() {
+        return fileExtension;
+    }
+
     public int getFileSize() {
         return MessageUtils.fromBigEndianBytes(fileSize);
     }
