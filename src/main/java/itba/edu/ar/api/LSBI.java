@@ -84,7 +84,14 @@ public class LSBI implements LSB {
     public byte[] embedding(Message message, byte[] bmp) {
 
         byte[] msg = message.toByteArray();
+        return embedding(msg, bmp);
 
+    }
+
+    private byte[] embedding(byte[] msg, byte[] bmp) {
+        if (bmp == null) {
+            return null;
+        }
         byte[] rc4Encrypt = rc4.encrypt(msg);
         int maxSize = bmp.length * 8 + 16;
         if (rc4Encrypt.length > maxSize) {
@@ -109,6 +116,7 @@ public class LSBI implements LSB {
         }
 
         return ret;
+
     }
 
     /**
@@ -121,21 +129,24 @@ public class LSBI implements LSB {
      */
     @Override
     public Message extract(byte[] bmp) {
+        if (bmp == null) {
+            return null;
+        }
         this.extractIndex = 6;
 
         this.hope = getHope(bmp[0]);
         this.rc4Password = Arrays.copyOfRange(bmp, 0, 6);
         this.rc4 = new RC4(this.rc4Password);
 
-        byte[] size = decrypt(6, SIZE_LENGTH + 6, bmp);
+        byte[] size = decrypt(SIZE_LENGTH, bmp);
         byte[] decSize = this.rc4.decrypt(size);
 
         int msgSize = MessageUtils.fromBigEndianBytes(decSize);
 
-        byte[] rc4Encrypted = decrypt(SIZE_LENGTH + 6, SIZE_LENGTH + 6 + 8 * msgSize, bmp);
+        byte[] rc4Encrypted = decrypt(8 * msgSize, bmp);
         byte[] message = this.rc4.decrypt(rc4Encrypted);
 
-        byte[] fileExtension = decryptExtension(SIZE_LENGTH + 6 + 8 * msgSize, bmp); //todo ver como hacer la busqueda
+        byte[] fileExtension = decryptExtension(bmp);
 
         return new Message.MessageBuilder()
                 .withFileBytes(message)
@@ -144,7 +155,7 @@ public class LSBI implements LSB {
                 .build();
     }
 
-    private byte[] decryptExtension(int start, byte[] bmp) {
+    private byte[] decryptExtension(byte[] bmp) {
 
         List<Byte> decryption = new ArrayList<>();
         int j = 0;
@@ -180,16 +191,13 @@ public class LSBI implements LSB {
     /**
      * funcion privada asi al menos puedo encontrar el tamaño del archivo
      *
-     * @param start index de donde empiezo
-     * @param end   hasta donde voy
-     * @param bmp   foto
+     * @param size tamaño de la extracción
+     * @param bmp  foto
      * @return el array de bytes en la estanografia
      */
-    private byte[] decrypt(int start, int end, byte[] bmp) {
+    private byte[] decrypt(int size, byte[] bmp) {
 
-        int size = end - start;
-
-        byte[] decryption = new byte[size/8];
+        byte[] decryption = new byte[size / 8];
         int j = 0;
         int decIndex = 0;
 
@@ -218,7 +226,7 @@ public class LSBI implements LSB {
 
         return decryption;
     }
-    //todo embeber extraer
+
 
     private byte getLSBit(byte b, byte[] bmp, int bitPosition) {
         byte bmpByte = bmp[this.extractIndex];
@@ -227,12 +235,30 @@ public class LSBI implements LSB {
 
     @Override
     public byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp) {
-        return null;//this.encrypt(cipherMessage.toByteArray(),bmp);
+        return embedding(cipherMessage.toByteArray(), bmp);
     }
 
     @Override
     public CipherMessage extractCiphered(byte[] bmp) {
-        return null;
+
+        this.extractIndex = 6;
+
+        this.hope = getHope(bmp[0]);
+        this.rc4Password = Arrays.copyOfRange(bmp, 0, 6);
+        this.rc4 = new RC4(this.rc4Password);
+
+        byte[] size = decrypt(SIZE_LENGTH, bmp);
+        byte[] decSize = this.rc4.decrypt(size);
+
+        int msgSize = MessageUtils.fromBigEndianBytes(decSize);
+
+        byte[] encMessage = decrypt(msgSize, bmp);
+        byte[] messageParts = this.rc4.decrypt(encMessage);
+
+        return new CipherMessage.CipherMessageBuilder()
+                .withCipherSize(msgSize)
+                .withCipherBytes(messageParts).build();
+
     }
 
     private int getHope(byte firstSigByte) {
