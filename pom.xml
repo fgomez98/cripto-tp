@@ -16,7 +16,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.11</junit.version>
         <args4j.version>2.33</args4j.version>
-        <guava.version>29.0-jre</guava.version>
         <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     </properties>
@@ -32,11 +31,6 @@
             <groupId>args4j</groupId>
             <artifactId>args4j</artifactId>
             <version>${args4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
     </dependencies>
 
@@ -61,7 +55,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>itba.edu.ar.tp2.App</mainClass>
+                                    <mainClass>itba.edu.ar.App</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

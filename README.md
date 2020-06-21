@@ -1,34 +1,34 @@
 # IMPORTANTE!!
-### Java soporta muchos algoritmos de encriptación seguros, pero algunos de ellos son débiles para ser utilizados en aplicaciones.  Para hacer funcionar encriptación de 256bit con AES, hay que instalar las políticas ilimitadas de oracle que lo permiten. 
-### Pasos:
 
-1)  Download the unlimited strength JCE policy files.
+### Para poder utilizar el stegobmp es necesario instalar las "unlimited strength JCE policy files" de oracle.
+### Si ya tenes tu entorno configurado con estas ploiticas podes omitir este paso.
+### Pasos:
+#### Si tenes Java 8u152 u superiror:
+
+1)  Situarse con el comando cd en el siguiente directorio
+    ```
+    cd <JDK_HOME>/jre/lib/security
+    ```
+    
+2)  Abrir el arcivo java.security
+
+3)  Busca una linea comentada que tenga "crypto.policy=unlimited" y descomentarla
+    
+#### Caso contrario:
+
+1)  Descargar las "unlimited strength JCE policy files".
     https://www.oracle.com/java/technologies/javase-jce8-downloads.html
 
-2)  Uncompress and extract the downloaded file.
+2)  Descomprimir y extraer el archivo descargado.
 
-    This will create a subdirectory called jce.
-    This directory contains the following files:
+    Se creara un subdirectorio con los siguintes archivos:
 
-        README.txt                   This file
-        local_policy.jar             Unlimited strength local policy file
-        US_export_policy.jar         Unlimited strength US export policy file
+        README.txt                   
+        local_policy.jar        ->    Unlimited strength local policy file
+        US_export_policy.jar    ->    Unlimited strength US export policy file
 
-3)  Install the unlimited strength policy JAR files.
+3)  Instalar las politicas.
 
-    In case you later decide to revert to the original "strong" but
-    limited policy versions, first make a copy of the original JCE
-    policy files (US_export_policy.jar and local_policy.jar). Then
-    replace the strong policy files with the unlimited strength
-    versions extracted in the previous step.
-
-    The standard place for JCE jurisdiction policy JAR files is:
-
-        <java-home>/lib/security           [Unix]
-        <java-home>\lib\security           [Windows]
-
-    
-        cd
     ```
     cd <java-home>/lib/security
     
@@ -41,20 +41,47 @@
     
     sudo cp UnlimitedJCEPolicyJDK8/local_policy.jar local_policy.jar
     sudo cp UnlimitedJCEPolicyJDK8/US_export_policy.jar US_export_policy.jar
-    ```
+    ```    
 
-### Si tenes Java 8u152 u superiror olvidate de todo esto.
-### Pasos:
-    
-1)  Buscar esta carpeta
-    ```
-    cd JDK_HOME/jre/lib/security
-    ```
-    
-2)  Abrir el arcivo java.security
+### Instrucciones de uso
 
-3)  Busca una linea comentada que tenga "crypto.policy=unlimited" y descomentala
+Situarse en la raiz y ejecutar los comandos segun corresponda
 
-4)  Goza  
+#### Compilacion
+```
+mvn clean install
+```
     
-    
+#### Ejecución
+Otorgar permisos de ejecución en caso de ser necesario
+```
+chmod 777 ./stegobmp.sh
+``` 
+Para correr el programa ejecutar el siguiente comando con los parametros deseados
+ ```
+ ./stegobmp.sh 
+ ```
+Posibles parametros:
+ * -a [AES128 | AES192 | AES256 | DES] : Algoritmo de encripción (default: AES128)
+ * -embed                              : Indica que se va a ocultar información
+ * -extract                            : Indica que se va a extraer información
+ * -in STRING[]                        : Archivo que se va a ocultar
+ * -m [ECB | CFB | OFB | CBC]          : Modo de encripción (default: CBC)
+ * -out STRING[]                       : Archivo bmp de salida, es decir, el archivo bitmapfile con la información de file incrustada.
+ * -p STRING[]                         : Archivo bmp que será el portador.
+ * -pass STRING[]                      : password de encripcion
+ * -steg [LSB1 | LSB4 | LSBI | MIRROR] : Algoritmo de esteganografiado: LSB de 1bit, LSB de 4 bits, LSB Improved
+
+#### Ejemplos Oportunos
+ ###### Ejemplo 1
+  ```
+  ./stegobmp.sh -embed -in "./src/main/resources/message.txt" -p "./src/main/resources/white.bmp" -out "./hidden-message.bmp" -steg LSB1
+  ```
+ ###### Ejemplo 2
+  ```
+  ./stegobmp.sh -extract -p "./src/main/resources/silence.bmp" -out "./src/main/resources/hidden-message" -steg LSB1
+  ```
+ ###### Ejemplo 3
+  ```
+  ./stegobmp.sh -extract -p "./src/main/resources/silence.bmp" -out "./src/main/resources/hidden-message" -steg LSB1 -a AES256 -m CFB -pass "solucion" 
+  ```
