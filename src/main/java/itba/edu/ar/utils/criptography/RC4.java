@@ -9,10 +9,14 @@ public class RC4 {
     private byte[] key;
     private final int sSize = 256;
     private byte[] S;
+    private int i;
+    private int j;
 
     public RC4(byte[] key) {
         this.key = key;
         this.S = stateVectorInit();
+        this.i = 0;
+        this.j = 0;
     }
 
     public byte[] encrypt(byte[] message) {
@@ -50,9 +54,9 @@ public class RC4 {
         if(restart){
             // con esto reinicio la matriz y puedo en el mismo codigo encriptar y desencriptar
             this.S = stateVectorInit();
+            this.i = 0;
+            this.j = 0;
         }
-        int i = 0;
-        int j = 0;
         byte[] retMessage = new byte[generatingOutput];
         byte[] K = new byte[generatingOutput];
         for (int k = 0; k < generatingOutput; k++) {
@@ -78,13 +82,22 @@ public class RC4 {
         byte[] key2 = bb.array();
         RC4 arc4 = new RC4(key2);
 
+        String a = "hola todo bien";
+        String a1 = "hola tod";
+        String a2 = "o bien";
 
-        byte[] ans = arc4.encrypt(testString.getBytes(),true);
-        for (byte an : ans) {
-            System.out.println(an);
-        }
-        String back = new String(arc4.decrypt(ans,true));
-        System.out.println(back);
+        byte[] b = (arc4.decrypt(a.getBytes()));
+        byte[] b1 = (arc4.decrypt(a1.getBytes(),true));
+        byte[] b2 = (arc4.decrypt(a2.getBytes()));
+        System.out.println("a");
+
+
+//        byte[] ans = arc4.encrypt(testString.getBytes(),true);
+//        for (byte an : ans) {
+//            System.out.println(an);
+//        }
+//        String back = new String(arc4.decrypt(ans,true));
+//        System.out.println(back);
     }
 
     private static byte[] hexStringToByteArray(String s) {

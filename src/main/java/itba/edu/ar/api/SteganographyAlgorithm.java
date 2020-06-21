@@ -17,7 +17,7 @@ public enum SteganographyAlgorithm {
     }, LSBI() {
         @Override
         public LSB getEncryptor() {
-            return null;
+            return new LSBI();
         }
     }, MIRROR() {
         @Override
