@@ -1,7 +1,7 @@
 # IMPORTANTE!!
 
 ### Para poder utilizar el stegobmp es necesario instalar las "unlimited strength JCE policy files" de oracle.
-### Si ya tenes tu entorno configurado con estas ploiticas podes omitir este paso.
+### Si ya tenes tu entorno configurado con estas politicas podes omitir este paso.
 ### Pasos:
 #### Si tenes Java 8u152 u superiror:
 
