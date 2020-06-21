@@ -81,7 +81,7 @@ public class LSBI implements LSB {
      * @return foto estanografada
      */
     @Override
-    public byte[] encrypt(Message message, byte[] bmp) {
+    public byte[] embedding(Message message, byte[] bmp) {
 
         byte[] msg = message.toByteArray();
 
@@ -120,7 +120,7 @@ public class LSBI implements LSB {
      * @return mesaje
      */
     @Override
-    public Message decrypt(byte[] bmp) {
+    public Message extract(byte[] bmp) {
         this.extractIndex = 6;
 
         this.hope = getHope(bmp[0]);
@@ -226,12 +226,12 @@ public class LSBI implements LSB {
     }
 
     @Override
-    public byte[] encryptCiphered(CipherMessage cipherMessage, byte[] bmp) {
+    public byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp) {
         return null;//this.encrypt(cipherMessage.toByteArray(),bmp);
     }
 
     @Override
-    public CipherMessage decryptCiphered(byte[] bmp) {
+    public CipherMessage extractCiphered(byte[] bmp) {
         return null;
     }
 

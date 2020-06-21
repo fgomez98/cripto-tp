@@ -30,9 +30,9 @@ public class Steganographer {
 
         if (cipher != null) {
             CipherMessage cipherMessage = CipherMessage.CipherMessageBuilder.aCipherMessage(message, cipher, encriptionPassword).build();
-            outBmpPixelData = lsb.encryptCiphered(cipherMessage, holderBmp.getPixelData());
+            outBmpPixelData = lsb.embeddingCiphered(cipherMessage, holderBmp.getPixelData());
         } else {
-            outBmpPixelData = lsb.encrypt(message, holderBmp.getPixelData());
+            outBmpPixelData = lsb.embedding(message, holderBmp.getPixelData());
         }
 
         Bmp.write(holderBmp.getFileHeader(), holderBmp.getInfoHeader(), outBmpPixelData, outFilename);
@@ -47,10 +47,10 @@ public class Steganographer {
         Message message;
 
         if (cipher != null) {
-            CipherMessage cipherMessage = lsb.decryptCiphered(holderBmp.getPixelData());
+            CipherMessage cipherMessage = lsb.extractCiphered(holderBmp.getPixelData());
             message = cipherMessage.getMessage(cipher, encriptionPassword);
         } else {
-            message = lsb.decrypt(holderBmp.getPixelData());
+            message = lsb.extract(holderBmp.getPixelData());
         }
 
         File outFile = new File(outFilename + message.getFileExtension());

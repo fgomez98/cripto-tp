@@ -27,7 +27,7 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public byte[] encrypt(Message message, byte[] bmp) {
+    public byte[] embedding(Message message, byte[] bmp) {
         int messageSize = message.getFileSize();
         if (!canEncrypt(messageSize, bmp)) {
             System.out.println("BMP file is too small for the message");
@@ -69,7 +69,7 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public Message decrypt(byte[] bmp) {
+    public Message extract(byte[] bmp) {
         if (bmp == null)
             return null;
 
@@ -87,7 +87,7 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public byte[] encryptCiphered(CipherMessage cipherMessage, byte[] bmp) {
+    public byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp) {
         byte[] bytesToEncrypt = cipherMessage.toByteArray();
         if (!canEncrypt(bytesToEncrypt.length, bmp)) {
             System.out.println("BMP file is too small for the message");
@@ -101,7 +101,7 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public CipherMessage decryptCiphered(byte[] bmp) {
+    public CipherMessage extractCiphered(byte[] bmp) {
         if (bmp == null)
             return null;
 

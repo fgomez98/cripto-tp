@@ -2,12 +2,12 @@ package itba.edu.ar.api;
 
 public interface LSB {
 
-    byte[] encrypt(Message message, byte[] bmp);
+    byte[] embedding(Message message, byte[] bmp);
 
-    Message decrypt(byte[] bmp);
+    Message extract(byte[] bmp);
 
-    byte[] encryptCiphered(CipherMessage cipherMessage, byte[] bmp);
+    byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp);
 
-    CipherMessage decryptCiphered(byte[] bmp);
+    CipherMessage extractCiphered(byte[] bmp);
 
 }
