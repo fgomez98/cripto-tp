@@ -43,7 +43,7 @@
     sudo cp UnlimitedJCEPolicyJDK8/US_export_policy.jar US_export_policy.jar
     ```    
 
-### Instrucciones de uso
+# Instrucciones de uso
 
 Situarse en la raiz y ejecutar los comandos segun corresponda
 
@@ -73,15 +73,23 @@ Posibles parametros:
  * -steg [LSB1 | LSB4 | LSBI | MIRROR] : Algoritmo de esteganografiado: LSB de 1bit, LSB de 4 bits, LSB Improved
 
 #### Ejemplos Oportunos
- ###### Ejemplo 1
+###### Ejemplo 1
   ```
-  ./stegobmp.sh -embed -in "./src/main/resources/message.txt" -p "./src/main/resources/white.bmp" -out "./hidden-message.bmp" -steg LSB1
+    ./stegobmp.sh -extract -p "./archivos/lado.bmp" -out "./archivos/hidden-message" -steg LSB4
   ```
- ###### Ejemplo 2
+###### Ejemplo 2
   ```
-  ./stegobmp.sh -extract -p "./src/main/resources/silence.bmp" -out "./src/main/resources/hidden-message" -steg LSB1
+    ./stegobmp.sh -extract -p "./archivos/lima.bmp" -out "./archivos/hidden-message" -steg LSBI
   ```
- ###### Ejemplo 3
+###### Ejemplo 3
   ```
-  ./stegobmp.sh -extract -p "./src/main/resources/silence.bmp" -out "./src/main/resources/hidden-message" -steg LSB1 -a AES256 -m CFB -pass "solucion" 
+    ./stegobmp.sh -extract -p "./archivos/silence.bmp" -out "./archivos/hidden-message" -steg LSB1 -a AES256 -m CFB -pass "solucion"
+  ```
+###### Ejemplo 4
+  ```
+    ./stegobmp.sh -embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-message.bmp" -steg LSB1
+  ```
+###### Ejemplo 5
+  ```
+    ./stegobmp.sh -embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-message.bmp" -steg LSB1 -a AES256 -m CFB -pass "solucion"
   ```

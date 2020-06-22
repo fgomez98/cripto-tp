@@ -1,4 +1,12 @@
 How you doin' ;)
--embed -in "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/message.txt" -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/lado.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message.bmp" -steg LSB1
--extract -p "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/silence.bmp" -out "/Users/fermingomez/Desktop/cripto-tp/src/main/resources/hidden-message" -steg LSB1
--extract -p "/Users/fermingomez/Desktop/archivos/ladoLSB4.bmp" -out "/Users/fermingomez/Desktop/archivos/hidden-message" -steg LSB4
+
+-embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-small-message-lsb1.bmp" -steg LSB1
+
+-embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-small-message-lsbi.bmp" -steg LSBI
+
+-embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-small-message-lsb4.bmp" -steg LSB4
+-embed -in "./archivos/big-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-big-message-lsb4.bmp" -steg LSB4
+
+-extract -p "./archivos/lado.bmp" -out "./archivos/hidden-message" -steg LSB4
+-extract -p "./archivos/lima.bmp" -out "./archivos/hidden-message" -steg LSBI
+-extract -p "./archivos/silence.bmp" -out "./archivos/hidden-message" -steg LSB1 -a AES256 -m CFB -pass "solucion"
