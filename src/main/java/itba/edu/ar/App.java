@@ -129,7 +129,8 @@ public class App {
                 stego.extract(app.getHolderFilename().get(), app.getOutFilename().get());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
     }
 

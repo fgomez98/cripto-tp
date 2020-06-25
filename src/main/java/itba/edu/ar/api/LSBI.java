@@ -3,9 +3,6 @@ package itba.edu.ar.api;
 import com.google.common.primitives.Bytes;
 import itba.edu.ar.utils.criptography.RC4;
 
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -81,23 +78,22 @@ public class LSBI implements LSB {
      * @return foto estanografada
      */
     @Override
-    public byte[] embedding(Message message, byte[] bmp) {
+    public byte[] embedding(Message message, byte[] bmp) throws NotEnoughSpaceException {
 
         byte[] msg = message.toByteArray();
         return embedding(msg, bmp);
 
     }
 
-    private byte[] embedding(byte[] msg, byte[] bmp) {
+    private byte[] embedding(byte[] msg, byte[] bmp) throws NotEnoughSpaceException {
         if (bmp == null) {
             return null;
         }
         byte[] rc4Encrypt = rc4.encrypt(msg);
-        int maxSize = bmp.length * 8 + 16;
+        int maxSize = bmp.length * 8 - 6;
         if (rc4Encrypt.length > maxSize) {
-            System.out.println("BMP file is too small for the message. " +
+            throw new NotEnoughSpaceException("BMP file is too small for the message. " +
                     "Use a message smaller than " + maxSize + " bytes");
-            return null;
         }
         byte[] ret = bmp.clone();
         byte[] password = this.rc4Password;
@@ -128,9 +124,9 @@ public class LSBI implements LSB {
      * @return mesaje
      */
     @Override
-    public Message extract(byte[] bmp) {
+    public Message extract(byte[] bmp) throws WrongLSBStegException {
         if (bmp == null) {
-            return null;
+            throw new WrongLSBStegException("BMP is empty");
         }
         this.extractIndex = 6;
 
@@ -142,6 +138,10 @@ public class LSBI implements LSB {
         byte[] decSize = this.rc4.decrypt(size);
 
         int msgSize = MessageUtils.fromBigEndianBytes(decSize);
+
+        if(msgSize < 0){
+            throw new WrongLSBStegException("Wrong LSB. Size read is negative");
+        }
 
         byte[] rc4Encrypted = decrypt(8 * msgSize, bmp);
         byte[] message = this.rc4.decrypt(rc4Encrypted);
@@ -234,12 +234,16 @@ public class LSBI implements LSB {
     }
 
     @Override
-    public byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp) {
+    public byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp) throws NotEnoughSpaceException {
         return embedding(cipherMessage.toByteArray(), bmp);
     }
 
     @Override
-    public CipherMessage extractCiphered(byte[] bmp) {
+    public CipherMessage extractCiphered(byte[] bmp) throws WrongLSBStegException {
+
+        if (bmp == null) {
+            throw new WrongLSBStegException("BMP is empty");
+        }
 
         this.extractIndex = 6;
 
@@ -251,6 +255,10 @@ public class LSBI implements LSB {
         byte[] decSize = this.rc4.decrypt(size);
 
         int msgSize = MessageUtils.fromBigEndianBytes(decSize);
+
+        if(msgSize < 0){
+            throw new WrongLSBStegException("Wrong LSB. Size read is negative");
+        }
 
         byte[] encMessage = decrypt(msgSize, bmp);
         byte[] messageParts = this.rc4.decrypt(encMessage);

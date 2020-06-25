@@ -1,10 +1,7 @@
 package itba.edu.ar.impl;
 
-import itba.edu.ar.api.CipherMessage;
-import itba.edu.ar.api.LSB;
-import itba.edu.ar.api.Message;
+import itba.edu.ar.api.*;
 import com.google.common.primitives.Bytes;
-import itba.edu.ar.api.MessageUtils;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -27,11 +24,10 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public byte[] embedding(Message message, byte[] bmp) {
+    public byte[] embedding(Message message, byte[] bmp) throws NotEnoughSpaceException {
         int messageSize = message.getFileSize();
         if (!canEncrypt(messageSize, bmp)) {
-            System.out.println("BMP file is too small for the message");
-            return null;
+            throw new NotEnoughSpaceException("BMP file is too small for the message");
         }
 
         byte[] editedBmp = bmp.clone();
@@ -69,11 +65,14 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public Message extract(byte[] bmp) {
+    public Message extract(byte[] bmp) throws WrongLSBStegException {
         if (bmp == null)
-            return null;
+            throw new WrongLSBStegException("Empty bpm");
 
         int messageLength = getMessageLength(bmp);
+        if(messageLength < 0){
+            throw new WrongLSBStegException("Wrong LSB. Size read is negative");
+        }
 
         int messageStartByte = SIZE_LENGTH / shiftingSize;
         int messageEndByte = messageLength * 8 / shiftingSize;
@@ -87,11 +86,10 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp) {
+    public byte[] embeddingCiphered(CipherMessage cipherMessage, byte[] bmp) throws NotEnoughSpaceException {
         byte[] bytesToEncrypt = cipherMessage.toByteArray();
         if (!canEncrypt(bytesToEncrypt.length, bmp)) {
-            System.out.println("BMP file is too small for the message");
-            return null;
+            throw new NotEnoughSpaceException("BMP file is too small for the message");
         }
 
         byte[] editedBmp = bmp.clone();
@@ -101,11 +99,15 @@ public class LSBX implements LSB {
     }
 
     @Override
-    public CipherMessage extractCiphered(byte[] bmp) {
+    public CipherMessage extractCiphered(byte[] bmp) throws WrongLSBStegException {
         if (bmp == null)
-            return null;
+            throw new WrongLSBStegException("Bmp empty");
 
         int messageLength = getMessageLength(bmp);
+
+        if(messageLength < 0){
+            throw new WrongLSBStegException("Wrong LSB. Size read is negative");
+        }
 
         int messageStartByte = SIZE_LENGTH / shiftingSize;
         byte[] decryptedMessage = decrypt(bmp, messageLength, messageStartByte);

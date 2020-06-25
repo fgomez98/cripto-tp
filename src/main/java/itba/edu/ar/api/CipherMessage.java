@@ -22,8 +22,8 @@ public class CipherMessage {
     }
 
     public byte[] toByteArray() {
-        int messageLenght = cipherSize.length + cipherBytes.length;
-        byte[] message = new byte[messageLenght];
+        int messageLength = cipherSize.length + cipherBytes.length;
+        byte[] message = new byte[messageLength];
 
         // array concatenation
         System.arraycopy(cipherSize, 0, message, 0, cipherSize.length);
