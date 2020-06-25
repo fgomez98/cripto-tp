@@ -61,7 +61,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>itba.edu.ar.tp2.App</mainClass>
+                                    <mainClass>itba.edu.ar.App</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
