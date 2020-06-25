@@ -28,11 +28,17 @@ public class Steganographer {
 
         byte[] outBmpPixelData;
 
-        if (cipher != null) {
-            CipherMessage cipherMessage = CipherMessage.CipherMessageBuilder.aCipherMessage(message, cipher, encriptionPassword).build();
-            outBmpPixelData = lsb.embeddingCiphered(cipherMessage, holderBmp.getPixelData());
-        } else {
-            outBmpPixelData = lsb.embedding(message, holderBmp.getPixelData());
+        try {
+            if (cipher != null) {
+                CipherMessage cipherMessage = CipherMessage.CipherMessageBuilder.aCipherMessage(message, cipher, encriptionPassword).build();
+                outBmpPixelData = lsb.embeddingCiphered(cipherMessage, holderBmp.getPixelData());
+            } else {
+                outBmpPixelData = lsb.embedding(message, holderBmp.getPixelData());
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not embed message in photo using the " +
+                    "steganography algorithm. Max length in bytes for the algorithm: "
+                    + lsb.getMaxSize(holderBmp.getPixelData()));
         }
 
         Bmp.write(holderBmp.getFileHeader(), holderBmp.getInfoHeader(), outBmpPixelData, outFilename);
@@ -42,15 +48,21 @@ public class Steganographer {
         holder archivo .bmp con mensaje oculto, outFilename path a donde guardar el mensaje oculto
     */
     public void extract(String holderFilename, String outFilename) throws Exception {
+
         Bmp holderBmp = Bmp.read(holderFilename);
 
         Message message;
 
-        if (cipher != null) {
-            CipherMessage cipherMessage = lsb.extractCiphered(holderBmp.getPixelData());
-            message = cipherMessage.getMessage(cipher, encriptionPassword);
-        } else {
-            message = lsb.extract(holderBmp.getPixelData());
+        try {
+            if (cipher != null) {
+                CipherMessage cipherMessage = lsb.extractCiphered(holderBmp.getPixelData());
+                message = cipherMessage.getMessage(cipher, encriptionPassword);
+            } else {
+
+                message = lsb.extract(holderBmp.getPixelData());
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Wrong LSB algorithm");
         }
 
         File outFile = new File(outFilename + message.getFileExtension());

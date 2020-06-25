@@ -1,7 +1,6 @@
 package itba.edu.ar.api;
 
 import itba.edu.ar.impl.LSBX;
-import itba.edu.ar.impl.Mirror;
 
 public enum SteganographyAlgorithm {
     LSB1() {
@@ -18,11 +17,6 @@ public enum SteganographyAlgorithm {
         @Override
         public LSB getEncryptor() {
             return new LSBI();
-        }
-    }, MIRROR() {
-        @Override
-        public LSB getEncryptor() {
-            return new Mirror();
         }
     };
 

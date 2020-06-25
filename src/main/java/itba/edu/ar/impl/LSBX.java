@@ -117,6 +117,11 @@ public class LSBX implements LSB {
                 .build();
     }
 
+    @Override
+    public int getMaxSize(byte[] bmp) {
+        return bmp.length  * shiftingSize / 8;
+    }
+
     private byte[] decryptExtension(byte[] toDecrypt, int startByte) {
         List<Byte> byteList = new ArrayList<>();
         int readerIndex = 0;

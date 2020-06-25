@@ -70,7 +70,7 @@ Posibles parametros:
  * -out STRING[]                       : Archivo bmp de salida, es decir, el archivo bitmapfile con la información de file incrustada.
  * -p STRING[]                         : Archivo bmp que será el portador.
  * -pass STRING[]                      : password de encripcion
- * -steg [LSB1 | LSB4 | LSBI | MIRROR] : Algoritmo de esteganografiado: LSB de 1bit, LSB de 4 bits, LSB Improved
+ * -steg [LSB1 | LSB4 | LSBI] : Algoritmo de esteganografiado: LSB de 1bit, LSB de 4 bits, LSB Improved
 
 #### Ejemplos Oportunos
 ###### Ejemplo 1

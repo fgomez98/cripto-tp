@@ -10,4 +10,6 @@ public interface LSB {
 
     CipherMessage extractCiphered(byte[] bmp) throws WrongLSBStegException;
 
+    int getMaxSize(byte[] bmp);
+
 }

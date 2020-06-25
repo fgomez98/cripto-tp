@@ -86,9 +86,6 @@ public class LSBI implements LSB {
     }
 
     private byte[] embedding(byte[] msg, byte[] bmp) throws NotEnoughSpaceException {
-        if (bmp == null) {
-            return null;
-        }
         byte[] rc4Encrypt = rc4.encrypt(msg);
         int maxSize = bmp.length * 8 - 6;
         if (rc4Encrypt.length > maxSize) {
@@ -139,8 +136,8 @@ public class LSBI implements LSB {
 
         int msgSize = MessageUtils.fromBigEndianBytes(decSize);
 
-        if(msgSize < 0){
-            throw new WrongLSBStegException("Wrong LSB. Size read is negative");
+        if (msgSize < 0) {
+            throw new WrongLSBStegException("Wrong LSB");
         }
 
         byte[] rc4Encrypted = decrypt(8 * msgSize, bmp);
@@ -256,7 +253,7 @@ public class LSBI implements LSB {
 
         int msgSize = MessageUtils.fromBigEndianBytes(decSize);
 
-        if(msgSize < 0){
+        if (msgSize < 0) {
             throw new WrongLSBStegException("Wrong LSB. Size read is negative");
         }
 
@@ -267,6 +264,11 @@ public class LSBI implements LSB {
                 .withCipherSize(msgSize)
                 .withCipherBytes(messageParts).build();
 
+    }
+
+    @Override
+    public int getMaxSize(byte[] bmp) {
+        return (bmp.length / 8) - 6;
     }
 
     private int getHope(byte firstSigByte) {
