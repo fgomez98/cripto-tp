@@ -140,10 +140,4 @@ public class Bmp {
         Cualquier dato util del archivo BMP que este en los headers agregar getter aca para evitar tener que abrir todos
         los campos
      */
-
-    public static void main(String[] args) throws IOException {
-        String pathToFile = "src/main/resources/lima.bmp";
-        Bmp bmp = Bmp.read(pathToFile);
-        Bmp.write(bmp, "src/main/resources/outBMP.bmp");
-    }
 }

@@ -75,21 +75,23 @@ Posibles parametros:
 #### Ejemplos Oportunos
 ###### Ejemplo 1
   ```
-    ./stegobmp.sh -extract -p "./archivos/lado.bmp" -out "./archivos/hidden-message" -steg LSB4
+  ./stegobmp.sh -extract -p "./archivos/lado.bmp" -out "./archivos/hidden-message" -steg LSB4
   ```
 ###### Ejemplo 2
   ```
-    ./stegobmp.sh -extract -p "./archivos/lima.bmp" -out "./archivos/hidden-message" -steg LSBI
+  ./stegobmp.sh -extract -p "./archivos/lima.bmp" -out "./archivos/hidden-message" -steg LSBI
   ```
 ###### Ejemplo 3
   ```
-    ./stegobmp.sh -extract -p "./archivos/silence.bmp" -out "./archivos/hidden-message" -steg LSB1 -a AES256 -m CFB -pass "solucion"
+  ./stegobmp.sh -extract -p "./archivos/silence.bmp" -out "./archivos/hidden-message" -steg LSB1 -a AES256 -m CFB -pass "solucion"
   ```
 ###### Ejemplo 4
   ```
-    ./stegobmp.sh -embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-message.bmp" -steg LSB1
+  dd if=/dev/urandom bs=1 count=50000 of=./archivos/small-message.txt
+  ./stegobmp.sh -embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-message.bmp" -steg LSB1
   ```
 ###### Ejemplo 5
   ```
-    ./stegobmp.sh -embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-message.bmp" -steg LSB1 -a AES256 -m CFB -pass "solucion"
+  dd if=/dev/urandom bs=1 count=50000 of=./archivos/small-message.txt
+  ./stegobmp.sh -embed -in "./archivos/small-message.txt" -p "./archivos/white.bmp" -out "./archivos/hidden-message.bmp" -steg LSB1 -a AES256 -m CFB -pass "solucion"
   ```
