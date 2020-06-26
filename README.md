@@ -73,6 +73,7 @@ Posibles parametros:
  * -steg [LSB1 | LSB4 | LSBI] : Algoritmo de esteganografiado: LSB de 1bit, LSB de 4 bits, LSB Improved
 
 #### Ejemplos Oportunos
+Dentro del directorio ./archivos, situar los archivos: lado.bmp, lima.bmp, silence.bmp, buenosaires.bmp correspondientes al grupo 11.
 ###### Ejemplo 1
   ```
   ./stegobmp.sh -extract -p "./archivos/lado.bmp" -out "./archivos/hidden-message" -steg LSB4
